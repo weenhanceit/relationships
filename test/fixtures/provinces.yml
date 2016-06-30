@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+ab:
+  province_code: AB
+  province_name: Alberta
+
+bc:
+  province_code: BC
+  province_name: British Columbia

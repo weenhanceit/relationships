@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  line1: MyText
+  line2: MyText
+  city: MyText
+  province: ab
+  postal_code: MyText
+
+two:
+  line1: MyText
+  line2: MyText
+  city: MyText
+  province: bc
+  postal_code: MyText
