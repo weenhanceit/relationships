@@ -11,4 +11,8 @@ class AddressTest < ActiveSupport::TestCase
     assert address.valid?, 'address not valid'
     assert address.save, 'address could not be saved'
   end
+
+  test 'address belongs to two people' do
+    assert_equal 2, addresses(:belongs_to_two_people).people.size
+  end
 end

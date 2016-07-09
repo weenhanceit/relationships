@@ -7,9 +7,15 @@ one:
   province: ab
   postal_code: MyText
 
-two:
+belongs_to_one_person:
   line1: MyText
   line2: MyText
   city: MyText
   province: bc
   postal_code: MyText
+
+belongs_to_two_people:
+  line1: two people
+  city: two city
+  province: ab
+  postal_code: two code

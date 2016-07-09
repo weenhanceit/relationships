@@ -1,0 +1,18 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+has_a_user:
+  name: Has a User
+  user: user_for_person
+
+has_no_user:
+  name: Has No User
+  user:
+
+has_no_address:
+  name: Has No address
+
+has_one_address:
+  name: Has Address
+
+has_two_addresses:
+  name: Has Two addresses

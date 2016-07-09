@@ -1,0 +1,16 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+has_one_address_01:
+  address: belongs_to_two_people
+  person: has_one_address
+  type:
+
+has_two_addresses_01:
+  address: belongs_to_one_person
+  person: has_two_addresses
+  type:
+
+has_two_addresses_02:
+  address: belongs_to_two_people
+  person: has_two_addresses
+  type:
