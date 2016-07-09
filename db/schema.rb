@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160630015441) do
+ActiveRecord::Schema.define(version: 20160709022405) do
+
+  create_table "address_people", force: :cascade do |t|
+    t.integer  "address_id"
+    t.integer  "person_id"
+    t.string   "type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["address_id"], name: "index_address_people_on_address_id"
+    t.index ["person_id"], name: "index_address_people_on_person_id"
+  end
 
   create_table "addresses", force: :cascade do |t|
     t.text     "line1"
@@ -23,11 +33,25 @@ ActiveRecord::Schema.define(version: 20160630015441) do
     t.index ["province_id"], name: "index_addresses_on_province_id"
   end
 
+  create_table "people", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_people_on_user_id"
+  end
+
   create_table "provinces", force: :cascade do |t|
     t.string   "province_code"
     t.string   "province_name"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
 end
