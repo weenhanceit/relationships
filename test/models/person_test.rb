@@ -43,4 +43,34 @@ class PersonTest < ActiveSupport::TestCase
     assert_equal 4, a_person.addresses.size
     assert_equal 3, a_person.address_types.size
   end
+
+  test 'person has three types of addresses version 2' do
+    a_person = Person.new(name: 'a_person')
+    an_address = Address.new(city: 'home city', province: provinces(:bc))
+    ap1 = AddressPerson.new(address: an_address,
+                            person: a_person,
+                            address_type: 'home')
+    ap2 = AddressPerson.new(address: an_address,
+                            person: a_person,
+                            address_type: 'mailing')
+    ap3 = AddressPerson.new(address: an_address,
+                            person: a_person,
+                            address_type: 'work')
+    another_address = Address.new(city: 'work city', province: provinces(:bc))
+    ap4 = AddressPerson.new(address: another_address,
+                            person: a_person,
+                            address_type: 'work')
+
+    assert_difference 'Person.count' do
+      assert_difference 'Address.count', 2 do
+        # The associations don't start working until you save the object.
+        assert ap1.save
+        assert ap2.save
+        assert ap3.save
+        assert ap4.save
+      end
+    end
+    assert_equal 4, a_person.addresses.size
+    assert_equal 3, a_person.address_types.size
+  end
 end
