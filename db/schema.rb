@@ -10,14 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160709022405) do
+ActiveRecord::Schema.define(version: 20160709173900) do
 
   create_table "address_people", force: :cascade do |t|
     t.integer  "address_id"
     t.integer  "person_id"
-    t.string   "type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "address_type"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
     t.index ["address_id"], name: "index_address_people_on_address_id"
     t.index ["person_id"], name: "index_address_people_on_person_id"
   end
