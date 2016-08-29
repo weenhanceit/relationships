@@ -37,7 +37,8 @@ class PersonTest < ActiveSupport::TestCase
     assert_difference 'Person.count' do
       assert_difference 'Address.count', 2 do
         # The associations don't start working until you save the object.
-        assert a_person.save
+        assert a_person.valid?, "Person isn't valid now."
+        assert a_person.save, 'Save failed.'
       end
     end
     assert_equal 4, a_person.addresses.size
@@ -72,5 +73,59 @@ class PersonTest < ActiveSupport::TestCase
     end
     assert_equal 4, a_person.addresses.size
     assert_equal 3, a_person.address_types.size
+  end
+
+  test 'Create from nested attributes' do
+    attributes_hash = {
+      name: 'A. T. R. Butes',
+      address_people_attributes: {
+        a: {
+          address_attributes: {
+            city: 'Home City',
+            province: provinces(:bc)
+          },
+          address_type: 'Home'
+        },
+        b: {
+          address_attributes: {
+            city: 'Work City',
+            province: provinces(:bc)
+          },
+          address_type: 'Work'
+        }
+      }
+    }
+
+    assert person = Person.new(attributes_hash)
+    assert person.save
+  end
+
+  test 'add phone number' do
+    person = Person.new(name: 'Phone Number')
+    person.phones << Phone.new(number: '555-555-5555')
+    person.phones << Phone.new(number: '777-777-7777')
+    assert_difference 'Person.count' do
+      assert_difference 'Phone.count', 2 do
+        assert person.save, -> { person.errors.inspect }
+      end
+    end
+    assert Phone.find_by(number: '555-555-5555'), "couldn't find number"
+  end
+
+  test 'add phones from nested attributes' do
+    person_hash = {
+      name: 'Larry Reid',
+      phones_attributes: {
+        '1' => { phone_type: 'work', number: '222-222-2222' },
+        '2' => { phone_type: 'home', number: '333-333-3333' }
+      }
+    }
+
+    person = Person.new(person_hash)
+    assert_difference 'Person.count' do
+      assert_difference 'Phone.count', 2 do
+        assert person.save, -> { person.errors }
+      end
+    end
   end
 end
