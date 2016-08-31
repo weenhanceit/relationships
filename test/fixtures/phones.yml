@@ -1,11 +1,16 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  number: MyString
-  phone_type: MyString
-  person: one
+phone_1_1:
+  number: 1111111111
+  phone_type: Home
+  person: has_one_phone
 
-two:
-  number: MyString
-  phone_type: MyString
-  person: two
+phone_2_1:
+  number: 2222222222
+  phone_type: Mobile
+  person: has_two_phones
+
+phone_2_2:
+  number: 3333333333
+  phone_type: Work
+  person: has_two_phones
