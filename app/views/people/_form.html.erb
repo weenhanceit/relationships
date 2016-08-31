@@ -1,0 +1,11 @@
+<%= form_for @person do |person| %>
+  <p>
+    <%= person.label :name %>
+    <%= person.text_field :name %>
+  </p>
+  <%= person.fields_for :phones do |phone_fields| %>
+    <%= render partial: "phones/fields",
+               locals: { phone_fields: phone_fields } %>
+  <% end %>
+  <%= person.submit %>
+<% end %>

@@ -16,3 +16,9 @@ has_one_address:
 
 has_two_addresses:
   name: Has Two addresses
+
+has_one_phone:
+  name: Has One Phone
+
+has_two_phones:
+  name: Has Two Phones
