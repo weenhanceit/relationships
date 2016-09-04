@@ -1,11 +1,14 @@
-<%= form_for @person do |person| %>
+<%= form_for @person do |person_form| %>
   <p>
-    <%= person.label :name %>
-    <%= person.text_field :name %>
+    <%= person_form.label :name %>
+    <%= person_form.text_field :name %>
   </p>
-  <%= person.fields_for :phones do |phone_fields| %>
-    <%= render partial: "phones/fields",
-               locals: { phone_fields: phone_fields } %>
-  <% end %>
-  <%= person.submit %>
+  <ul class="phone-numbers">
+    <%= person_form.fields_for :phones do |phone_fields| %>
+      <%= render partial: "phones/fields",
+                 locals: { f: phone_fields } %>
+    <% end %>
+    <p><%= link_to_add_fields "Add Phone", person_form, :phones %></p>
+  </ul>
+  <p><%= person_form.submit %></p>
 <% end %>

@@ -2,11 +2,14 @@ class Person < ApplicationRecord
   belongs_to :user, optional: true
 
   has_many :address_people, inverse_of: :person
-  accepts_nested_attributes_for :address_people, allow_destroy: true
+  accepts_nested_attributes_for :address_people
+  # reject_if: :all_blank
   has_many :addresses, through: :address_people
 
   has_many :phones, inverse_of: :person
-  accepts_nested_attributes_for :phones
+  accepts_nested_attributes_for :phones,
+                                allow_destroy: true,
+                                reject_if: :all_blank
 
   def address_types
     address_people.map(&:address_type).uniq

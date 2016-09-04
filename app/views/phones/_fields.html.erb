@@ -1,7 +1,10 @@
-<% puts "Phone render" %>
-<p>
-  <%= phone_fields.label :phone_type %>
-  <%= phone_fields.text_field :phone_type %>
-  <%= phone_fields.label :number %>
-  <%= phone_fields.text_field :number %>
-</p>
+<fieldset>
+  <li>
+    <%= f.label :phone_type, "Type" %>
+    <%= f.text_field :phone_type %>
+    <%= f.label :number, "Number" %>
+    <%= f.text_field :number %>
+    <%= f.hidden_field :_destroy %>
+    <%= link_to "Remove", '#', class: "remove_fields" %>
+  </li>
+</fieldset>
