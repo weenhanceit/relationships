@@ -78,4 +78,26 @@ class CrudPhoneNumbersTest < CapybaraTestCase
 
     assert Person.find_by(name: new_name), "Couldn't find Person #{new_name}"
   end
+
+  test "edit existing" do
+    visit "/people"
+    within("p", text: "Has Two Phones") do
+      click_link "Edit"
+    end
+
+    new_name = "New Name"
+    fill_in "Name", with: new_name
+    new_number = "000-000-0000"
+    within("fieldset:first-of-type") do
+      fill_in "Number", with: new_number
+    end
+    assert_no_difference "Phone.count" do
+      assert_no_difference "Person.count" do
+        click_button "Update Person"
+      end
+    end
+
+    assert has_text?(new_name)
+    assert has_text?(new_number)
+  end
 end
