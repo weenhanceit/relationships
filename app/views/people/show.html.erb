@@ -3,11 +3,6 @@
   <%= @person.name %>
 </p>
 <ul class="phone-numbers">
-  <% @person.phones.each do |phone| %>
-    <li>
-      Type: <%= phone.phone_type %>
-      Number: <%= phone.number %>
-    </li>
-  <% end %>
+  <%= render partial: "phones/phone", collection: @person.phones %>
   <p><%= link_to "Edit", edit_person_path(@person) %></p>
 </ul>

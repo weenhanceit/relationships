@@ -1,0 +1,8 @@
+<li>
+  Type: <%= phone.phone_type %>
+  Number: <%= phone.number %>
+  <% if local_assigns[:top_level] %>
+    <%= link_to "Show", phone_path(phone) %>
+    <%= link_to "Edit", edit_phone_path(phone) %>
+  <% end %>
+</li>
