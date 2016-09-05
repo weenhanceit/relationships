@@ -1,0 +1,4 @@
+<ul>
+  <%= render partial: "phone", collection: @phones, locals: { top_level: true } %>
+  <li><%= link_to "Add Phone", new_phone_path %></li>
+</ul>
