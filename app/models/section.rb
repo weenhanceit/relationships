@@ -5,6 +5,6 @@
 class Section < ApplicationRecord
   belongs_to :session, inverse_of: :sections, autosave: true
   belongs_to :course, inverse_of: :sections, autosave: true
-  has_many :enrollments, inverse_of: :section, autosave: true
+  has_many :enrollments, inverse_of: :section, autosave: true, dependent: :destroy
   has_many :students, through: :enrollments
 end
