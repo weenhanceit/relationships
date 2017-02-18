@@ -9,7 +9,7 @@ rails g migration create_courses name:string
 ##
 # Represents a course.
 class Course < ApplicationRecord
-  has_many :sections, inverse_of: :course, autosave: true
+  has_many :sections, inverse_of: :course, autosave: true, dependent: :destroy
   has_many :sessions, through: :sections
 end
 ```
@@ -23,7 +23,7 @@ rails g migration create_sessions start_date:date end_date:date name:string
 ##
 # Represents a period during which the instituation offers courses.
 class Session < ApplicationRecord
-  has_many :sections, inverse_of: :session, autosave: true
+  has_many :sections, inverse_of: :session, autosave: true, dependent: :destroy
   has_many :courses, through: :sections
 end
 ```
@@ -33,15 +33,19 @@ end
 rails g migration create_sections short_name:string session:belongs_to course:belongs_to
 ```
 ### Model
+Do not put `autosave: true` on the `belongs_to` side of the association.
+Join records will get saved without the ID of one side of the association
+(which shouldn't even pass validation but it does),
+and that association is effectively lost.
 ```
 ##
 # Represents a course for a particular group of students,
 # given at a particular session. There may be mulitple instances of a course
 # given during a session.
 class Section < ApplicationRecord
-  belongs_to :session, inverse_of: :sections, autosave: true
-  belongs_to :course, inverse_of: :sections, autosave: true
-  has_many :enrollments, inverse_of: :section, autosave: true
+  belongs_to :session, inverse_of: :sections
+  belongs_to :course, inverse_of: :sections
+  has_many :enrollments, inverse_of: :section, autosave: true, dependent: :destroy
   has_many :students, through: :enrollments
 end
 ```
@@ -70,8 +74,8 @@ rails g migration create_enrollments student:belongs_to section:belongs_to 'fina
 ##
 # Represents a student enrolled in a particular offering of a course.
 class Enrollment < ApplicationRecord
-  belongs_to :student, inverse_of: :enrollments, autosave: true
-  belongs_to :section, inverse_of: :enrollments, autosave: true
+  belongs_to :student, inverse_of: :enrollments
+  belongs_to :section, inverse_of: :enrollments
 end
 ```
 
