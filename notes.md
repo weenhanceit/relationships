@@ -34,6 +34,10 @@ about "locals undefined."
   * `Class.includes(:association, :association, ...).find(...)`
   * Loading the dependent objects is something you do when you
   do the `find`, so it's not done on the association.
+* Deleting dependent options on `accepts_nested_attributes_for` is interesting. Start with `allow_destroy: true`, but that's just for the `_delete` attribute
+* `accepts_nested_attributes_for`:
+  * Also have to set up the accepted parameters
+  * Make sure `id` field is in the view/parameters
 * The association will save all dependent objects if the association
 is defined with `autosave: true`, or the model `accepts_nested_attributes_for`
 the dependent
@@ -100,6 +104,25 @@ or just when you actually save.
 # Routes
 * Always use shallow routes.
 * Shallow routes inside shallow routes will generate what you expect.
+
+# Same Types in Different Models
+E.g. Phone numbers or postal codes.
+You need to validate them and normalize their format,
+but they're just one field in various models.
+
+## `attribute` Method
+The `attribute` method lets you define a different class (more generally, type),
+for your model attributes. I think this is what we need for generalizing
+types across models.
+
+The attribute type will only solve part of the problem.
+You also need, amongst other things,
+validators on the class
+
+# Service Objects
+http://brewhouse.io/blog/2014/04/30/gourmet-service-objects.html
+
+# Concerns
 
 # Examples
 * People and phone numbers for `has_many` and `belongs_to`.
