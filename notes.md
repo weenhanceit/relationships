@@ -5,6 +5,8 @@ your own hierarchy.
 * `render` takes a block which the partial can yield.
 * When you want to take advantage of the partial named after the model,
 name the partial in the singular, but `render` a pluralized collection.
+In that case, the partial has to be named as the singular of the model name,
+and the local variable is the partial is actually named after the partial.
 * The "polymorphic" partial trick depends on the partial named in the singular,
 for the class/model. Question is, where does the model have to be?
 * Variable naming in the partial is complicated.
@@ -12,8 +14,12 @@ A lot of the guide examples
 show instance variables in the view,
 but some other source recommends always doing a local variable,
 as it makes it easier to use the partial from multiple views.
-* Shared partials need to go in a shared folder,
-or put them somewhere up the directory hierarchy.
+* Shared partials need to go in the `app/views/application` folder
+(which isn't created by default),
+Where they will be automatically found without putting any path
+in the `render` call.
+Or you can put them somewhere up the directory hierarchy,
+if they're not needed in all controllers/views.
 * Forgetting to say `render partial: ...` leads to a weird error message
 about "locals undefined."
 
@@ -82,6 +88,9 @@ Deletion doesn't work without the primary key
 `has_many :through`, you need to set both `has_many` sides of
 the association to the join object. Also, the actual `has_many :through`
 won't work unless you've saved the objects
+* If you want `autosave: true` to work when both the parent and child
+of a `has_many` are new, you have to manually build the `belongs_to` side
+of the association.
 * Strong parameters are a mystery:
   * `has_many`
   * `belongs_to`
@@ -91,6 +100,14 @@ won't work unless you've saved the objects
 `accepts_nested_attributes_for`, but it might have been
 due to invalid data that got into the database somehow.]
 [Also, check out scopes on `belongs_to`.]
+
+# More Thoughts About Forms
+* The version of `fields_for` that's a method to a form builder
+is most interesting for generating names and IDs on fields
+that are going to be submitted
+and processed with nested parameters.
+* To simply render a partial multiple times,
+call the partial with a `collection:` option.
 
 # Validations and Error Handling
 * The algorithm for where to put errors on validations
@@ -104,6 +121,8 @@ or just when you actually save.
 # Routes
 * Always use shallow routes.
 * Shallow routes inside shallow routes will generate what you expect.
+* There is an almost undocumented requirement for the `form_with` call
+that I need to write up here.
 
 # Same Types in Different Models
 E.g. Phone numbers or postal codes.
@@ -142,3 +161,19 @@ self-referential relationship.
 * The wonky syntax to make create and edit work with the same view,
 when you have nested models in a view (the [child, parent] thing,
   or is it the other way around???)
+
+# Faking Sign-In
+You may want to avoid setting up Devise early on.
+To avoid having to rewrite a lot of test cases,
+here are some strategies:
+* Have all system tests log in via a helper.
+Put the helper in a module in `test/helpers`
+* Make a `current_user` method in `app/controllers/application_controller.rb`,
+and make it a helper method (`helper_method :current_user`)
+
+However, my current thinking is just set up Devise.
+It doesn't take long.
+You can create a password for test users in fixtures like this:
+```
+encrypted_password: <%= User.new.send(:password_digest, "password") %>
+```
