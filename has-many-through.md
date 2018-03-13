@@ -21,7 +21,7 @@ rails g migration create_sessions start_date:date end_date:date name:string
 ### Model
 ```
 ##
-# Represents a period during which the instituation offers courses.
+# Represents a period during which the institution offers courses.
 class Session < ApplicationRecord
   has_many :sections, inverse_of: :session, autosave: true, dependent: :destroy
   has_many :courses, through: :sections
