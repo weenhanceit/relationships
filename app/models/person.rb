@@ -25,6 +25,8 @@ class Person < ApplicationRecord
   has_many :children, through: :child_links, class_name: "Person"
   accepts_nested_attributes_for :children, allow_destroy: true
 
+  include Dag
+
   def address_types
     address_people.map(&:address_type).uniq
   end

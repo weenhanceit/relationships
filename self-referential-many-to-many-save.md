@@ -103,6 +103,7 @@ In fact, someone's ancestors can't be their child either:
 ```
 <%= box.check_box(disabled: @person.and_ancestors.include?(box.object)).concat(box.label) %>
 ```
+where `@person.and_ancestors` is an Enumerable of `@person` and all its ancestors.
 ### Permitted Parameters
 The full list of permitted parameters depends on what appears in the view. This is the minimum to make the nest parameters work.
 ```
