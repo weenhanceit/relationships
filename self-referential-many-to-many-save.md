@@ -1,27 +1,34 @@
 # Self-Referential Many-to-Many Save
+A person can be a parent, or a child, or both. They can have more than one parent or child. If person A is person B's ancestor, person B can't also be a descendant of Person A. (The math and computer science people call this a [directed acyclic graph](https://en.wikipedia.org/wiki/Directed_acyclic_graph))
+
+In Rails, the easiest way to do this is to set up a `has_many :through` association for the parent, and another one for the child. Both will reference the same join table (`relationships` in this example).
+
+The user interface is a list of check boxes for each person on the edit page of a person. Checking a box makes the checked person a child of the current person.
 ## Person
 ### Migration
-I don't remember.
+```
+rails g model person name:string
+```
 ### Model
 ```
 class Person < ApplicationRecord
   ...
   has_many :parent_links,
-           foreign_key: :child_id,
-           class_name: "Relationship",
-           dependent: :destroy
-  accepts_nested_attributes_for :parent_links, allow_destroy: true
+         foreign_key: :child_id,
+         class_name: "Relationship",
+         dependent: :destroy
   has_many :parents, through: :parent_links, class_name: "Person"
-
+  accepts_nested_attributes_for :parents, allow_destroy: true
   has_many :child_links,
-           foreign_key: :parent_id,
-           class_name: "Relationship",
-           dependent: :destroy
-  accepts_nested_attributes_for :child_links, allow_destroy: true
+         foreign_key: :parent_id,
+         class_name: "Relationship",
+         dependent: :destroy
   has_many :children, through: :child_links, class_name: "Person"
+  accepts_nested_attributes_for :children, allow_destroy: true
   ...
 end
 ```
+Note that the links are automatically destroyed if the person is destroyed. It's hard to think of a case where this is not the desired behaviour (but one might exist).
 ## Relationship
 ### Migration
 ```
@@ -37,6 +44,9 @@ def change
   end
 end
 ```
+Postgres, MySql, MS SQL Server, and Oracle all automatically create an index for the primary key (the `id` column automatically created by the migration).
+
+The `id` column is needed to directly delete relationships without deleting either the parent or the child.
 ### Model
 ```
 class Relationship < ApplicationRecord
@@ -48,3 +58,53 @@ end
 Unlike what I recall as my previous experiences, you can create a new Person, connect it to another new person *with `build`*, save the first Person, and everything will magically be in the database (even without `autosave: true`). Worth noting that the class has to be exactly perfect. I had something messed up in one of the `accepts_nested_attributes_for`, and it caused problems for the test cases, even though I didn't think I was using nested attributes.
 
 It is possible that my problems were always when I was trying to do everything in memory. The relationship isn't bidirectional until it's saved.
+
+## User Interface
+[To find the API documentation for associations, go to `api.rubyonrails.org` and search for `ActiveRecord::Associations::ClassMethods`.]
+### Simple
+```
+<%= person_form.collection_check_boxes(:child_ids,
+                                       Person.all,
+                                       :id,
+                                       :name) %>
+```
+This is simple, but you'll have to arrange formatting by CSS styles appropriately selected to the `input`, for example, by putting them in a `div` with a particular class or id.
+
+The `child_ids` method on the association, created automatically by Rails, is crucial to make this approach work.
+### Formatting
+You can give a block to `collection_check_boxes`, and that lets you take much more control of the formatting:
+```
+<ul>
+  <%= person_form.collection_check_boxes(:child_ids,
+                                         Person.all,
+                                         :id,
+                                         :name) do |box| %>
+  <li>
+    <%= box.check_box.concat(box.label) %>
+  </li>
+  <% end %>
+</ul>
+```
+### Disabled Fields
+By giving a block, you can also disable some fields. In the example, someone can't be their own child (not necessarily true of all applications of this pattern).
+```
+<ul>
+<%= person_form.collection_check_boxes(:child_ids,
+                                       Person.all,
+                                       :id,
+                                       :name) do |box| %>
+  <li>
+    <%= box.check_box(disabled: box.object == @person).concat(box.label) %>
+  </li>
+  <% end %>
+</ul>
+```
+### Permitted Parameters
+The full list of permitted parameters depends on what appears in the view. This is the minimum to make the nest parameters work.
+```
+private
+
+def person_params
+  params.require(:person).permit(:id, child_ids: [])
+end
+```

@@ -9,5 +9,16 @@
     <% end %>
     <p><%= link_to_add_fields "Add Phone", person_form, :phones %></p>
   </ul>
+  <h3>Children</h3>
+  <ul>
+    <%= person_form.collection_check_boxes(:child_ids,
+      Person.all,
+      :id,
+      :name) do |box| %>
+      <li>
+        <%= box.check_box(disabled: box.object == @person).concat(box.label) %>
+      </li>
+    <% end %>
+  </ul>
   <p><%= person_form.submit %></p>
 <% end %>
