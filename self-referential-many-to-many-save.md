@@ -116,6 +116,41 @@ end
 ## Enforcing the Acyclic Nature
 The solution so far does not enforce the acyclic (ancestors can't be descendants and vice-versa) nature of this parent-child relationship.
 
+The user should not be able to select as a child, any of its ancestors. Nor should it be able to select as a parent, any of its descendants. As long as the edit page only permits setting either the children or the parents, but not both, everything is fine the way it is, as long as the last part of "Disabled Fields" is used.
+
+To set both parents and children on the same page, it gets trickier. Selecting a child changes which people are available as parents. And selecting a parent changes which people are available as children.
+
+First, set the page to show both parent and child lists. The permitted parameters are now:
+```
+private
+
+def person_params
+  params.require(:person).permit(:id, child_ids: [], parent_ids: [])
+end
+```
+And the view is now:
+```
+<ul>
+<%= person_form.collection_check_boxes(:child_ids,
+                                       Person.all,
+                                       :id,
+                                       :name) do |box| %>
+  <li>
+    <%= box.check_box(disabled: @person.and_ancestors.include?(box.object)).concat(box.label) %>
+  </li>
+  <% end %>
+</ul>
+<ul>
+<%= person_form.collection_check_boxes(:parent_ids,
+                                       Person.all,
+                                       :id,
+                                       :name) do |box| %>
+  <li>
+    <%= box.check_box(disabled: @person.and_descendants.include?(box.object)).concat(box.label) %>
+  </li>
+  <% end %>
+</ul>
+```
 
 
 Another approach would be to enforce it on the back end and simply return an error when the form is submitted. This isn't a great user experience in many cases, so it won't be covered here. It might be the easiest to implement, and in some cases might be acceptable.

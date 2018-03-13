@@ -42,6 +42,7 @@ class PeopleController < ApplicationController
     params.require(:person).permit(:name,
                                    :id,
                                    child_ids: [],
+                                   parent_ids: [],
                                    phones_attributes: [
                                      :id, :phone_type, :number, :_destroy
                                    ])
