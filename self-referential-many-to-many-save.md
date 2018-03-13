@@ -99,6 +99,10 @@ By giving a block, you can also disable some fields. In the example, someone can
   <% end %>
 </ul>
 ```
+In fact, someone's ancestors can't be their child either:
+```
+<%= box.check_box(disabled: @person.and_ancestors.include?(box.object)).concat(box.label) %>
+```
 ### Permitted Parameters
 The full list of permitted parameters depends on what appears in the view. This is the minimum to make the nest parameters work.
 ```
@@ -108,3 +112,9 @@ def person_params
   params.require(:person).permit(:id, child_ids: [])
 end
 ```
+## Enforcing the Acyclic Nature
+The solution so far does not enforce the acyclic (ancestors can't be descendants and vice-versa) nature of this parent-child relationship.
+
+
+
+Another approach would be to enforce it on the back end and simply return an error when the form is submitted. This isn't a great user experience in many cases, so it won't be covered here. It might be the easiest to implement, and in some cases might be acceptable.
