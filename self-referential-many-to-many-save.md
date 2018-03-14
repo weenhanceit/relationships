@@ -1,9 +1,21 @@
 # Self-Referential Many-to-Many Save
 A person can be a parent, or a child, or both. They can have more than one parent or child. If person A is person B's ancestor, person B can't also be a descendant of Person A. (The math and computer science people call this a [directed acyclic graph](https://en.wikipedia.org/wiki/Directed_acyclic_graph))
 
-In Rails, the easiest way to do this is to set up a `has_many :through` association for the parent, and another one for the child. Both will reference the same join table (`relationships` in this example).
+The easy path in Rails is to:
 
-The user interface is a list of check boxes for each person on the edit page of a person. Checking a box makes the checked person a child of the current person.
+- For the user interface, give a list of check boxes, one for each person, on the new or edit page of a person. Checking a box makes the checked person a child of the current person. The UI could also have a similar list of check boxes for parents on the same page, although that leads to complications, which will be discussed below
+- For the database, create a join table with `parent_id` and `child_id` columns, to join people
+- For the model, set up a `has_many :through` association for the parent, and another one for the child. Both will reference the same join table (`relationships` in this example)
+
+## User Interface
+Some user interfaces are going to be much more difficult to implement. Rails makes it relatively easy to give users a page that lets them connect the current record to other records through a `has_many :through`, using check boxes. This can be done as a "normal" page, with a submit button that creates or updates everything when the user presses it.
+
+Things get much more complicated to implement the minute you want any other functionality:
+
+- A filter on the list of check boxes means changes to the check boxes would have to be saved before filtering. This is relatively easy to do with Ajax, but it makes part of the form Ajaxy. To give a consistent experience to the user, you'd want to whole form to always save, and you'd want all forms in the application to always save
+- It would be nice to let the user set parents and children of a person on the same page. But if the application is a directed acyclic graph, you have to modify one list based on changes in settings to the other. Again, you could lose unsaved changes unless you save before every time you have to update a list
+- Other UI models (e.g. dragging items from one list to another) are not so easy to implement, because they don't fit the nested attributes approach very well
+
 ## Person
 ### Migration
 ```
@@ -26,14 +38,16 @@ class Person < ApplicationRecord
          dependent: :destroy,
          inverse_of: :parent
   has_many :children, through: :child_links, class_name: "Person"
-  accepts_nested_attributes_for :children, allow_destroy: true  ...
+  accepts_nested_attributes_for :children, allow_destroy: true
+  ...
 end
 ```
 Some things worth noting about the above:
 
-- It may look wrong that `:parent_links` is inverse of `:child` and uses foreign key `:child_id`, but that's because this person is the child of its parent
+- It may look wrong that `:parent_links` is inverse of `:child` and uses foreign key `:child_id`, but that's because this person is the child of its parent. When Rails looks for the children of a person, it has to look for relationships where the `parent_id` is `person.id`. The `child_id`s or those relationships are the children of the person
 - `inverse_of` is easy to forget, and is absolutely necessary. The failures will happen in certain situations, so it's possible not to notice that it's missing
 - The links are automatically destroyed if the person is destroyed. It's hard to think of a case where this is not the desired behaviour (but one might exist)
+
 ## Relationship
 ### Migration
 ```
@@ -52,6 +66,7 @@ end
 Postgres, MySql, MS SQL Server, and Oracle all automatically create an index for the primary key (the `id` column automatically created by the migration).
 
 The `id` column is needed to directly delete relationships without deleting either the parent or the child.
+
 ### Model
 ```
 class Relationship < ApplicationRecord
@@ -64,8 +79,8 @@ Unlike what I recall as my previous experiences, you can create a new Person, co
 
 It is possible that my problems were always when I was trying to do everything in memory. The relationship isn't bidirectional until it's saved.
 
-## User Interface
 [To find the API documentation for associations, go to `api.rubyonrails.org` and search for `ActiveRecord::Associations::ClassMethods`.]
+
 ### Simple
 ```
 <%= person_form.collection_check_boxes(:child_ids,
@@ -76,6 +91,7 @@ It is possible that my problems were always when I was trying to do everything i
 This is simple, but you'll have to arrange formatting by CSS styles appropriately selected to the `input`, for example, by putting them in a `div` with a particular class or id.
 
 The `child_ids` method on the association, created automatically by Rails, is crucial to make this approach work.
+
 ### Formatting
 You can give a block to `collection_check_boxes`, and that lets you take much more control of the formatting:
 ```
@@ -112,6 +128,7 @@ In fact, someone's ancestors can't be their child either:
     ).concat(box.label) %>
 ```
 where `@person.and_ancestors` is an Enumerable of `@person` and all its ancestors.
+
 ### Permitted Parameters
 The full list of permitted parameters depends on what appears in the view. This is the minimum to make the nest parameters work.
 ```
@@ -166,6 +183,5 @@ And the view is now:
   <% end %>
 </ul>
 ```
-
 
 Another approach would be to enforce it on the back end and simply return an error when the form is submitted. This isn't a great user experience in many cases, so it won't be covered here. It might be the easiest to implement, and therefore in some cases might be acceptable.
