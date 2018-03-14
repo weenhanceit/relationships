@@ -16,19 +16,24 @@ class Person < ApplicationRecord
   has_many :parent_links,
          foreign_key: :child_id,
          class_name: "Relationship",
-         dependent: :destroy
+         dependent: :destroy,
+         inverse_of: :child
   has_many :parents, through: :parent_links, class_name: "Person"
   accepts_nested_attributes_for :parents, allow_destroy: true
   has_many :child_links,
          foreign_key: :parent_id,
          class_name: "Relationship",
-         dependent: :destroy
+         dependent: :destroy,
+         inverse_of: :parent
   has_many :children, through: :child_links, class_name: "Person"
-  accepts_nested_attributes_for :children, allow_destroy: true
-  ...
+  accepts_nested_attributes_for :children, allow_destroy: true  ...
 end
 ```
-Note that the links are automatically destroyed if the person is destroyed. It's hard to think of a case where this is not the desired behaviour (but one might exist).
+Some things worth noting about the above:
+
+- It may look wrong that `:parent_links` is inverse of `:child` and uses foreign key `:child_id`, but that's because this person is the child of its parent
+- `inverse_of` is easy to forget, and is absolutely necessary. The failures will happen in certain situations, so it's possible not to notice that it's missing
+- The links are automatically destroyed if the person is destroyed. It's hard to think of a case where this is not the desired behaviour (but one might exist)
 ## Relationship
 ### Migration
 ```
