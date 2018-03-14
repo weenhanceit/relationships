@@ -9,7 +9,8 @@
     <% end %>
     <p><%= link_to_add_fields "Add Phone", person_form, :phones %></p>
   </ul>
-  <h3>Children</h3>
+  <%= render partial: "children/index", locals: { f: person_form } %>
+  <!-- <h3>Children</h3>
   <ul>
     <%= person_form.collection_check_boxes(:child_ids,
       Person.all,
@@ -19,7 +20,7 @@
         <%= box.check_box(disabled: @person.and_ancestors.include?(box.object)).concat(box.label) %>
       </li>
     <% end %>
-  </ul>
+  </ul> -->
   <h3>Parents</h3>
   <ul>
   <%= person_form.collection_check_boxes(:parent_ids,
@@ -27,7 +28,21 @@
                                          :id,
                                          :name) do |box| %>
     <li>
-      <%= box.check_box(disabled: @person.and_descendants.include?(box.object)).concat(box.label) %>
+      <!-- Some interesting code here. You need the onchange because your want
+           the current value from the browser, so it has to come from Javascript.
+           The `data` hash is standard Rails UJS, but you have to have set up
+           the routing. -->
+      <!-- FIXME: This whole approach is wrong, too, because when I refresh the
+           other box, I'll overwrite whatever changes the user has made and not
+           saved. -->
+      <%= box.check_box(disabled: @person.and_descendants.include?(box.object),
+                        onchange: "$(this).data('params', 'checked=' + this.checked * this.checked)",
+                        data: {
+                          remote: true,
+                          url: children_path(@person.id),
+                          method: :get
+                          })
+             .concat(box.label) %>
     </li>
     <% end %>
   </ul>

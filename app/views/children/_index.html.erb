@@ -1,0 +1,12 @@
+<h3>Children</h3>
+<ul>
+  <%= f.collection_check_boxes(:child_ids,
+    Person.all,
+    :id,
+    :name) do |box| %>
+    <li>
+      <%= box.check_box(disabled: @person.and_ancestors.include?(box.object))
+             .concat(box.label) %>
+    </li>
+  <% end %>
+</ul>

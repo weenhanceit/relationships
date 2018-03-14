@@ -118,7 +118,9 @@ The solution so far does not enforce the acyclic (ancestors can't be descendants
 
 The user should not be able to select as a child, any of its ancestors. Nor should it be able to select as a parent, any of its descendants. As long as the edit page only permits setting either the children or the parents, but not both, everything is fine the way it is, as long as the last part of "Disabled Fields" is used.
 
-To set both parents and children on the same page, it gets trickier. Selecting a child changes which people are available as parents. And selecting a parent changes which people are available as children.
+To set both parents and children on the same page, it gets trickier. Selecting a child changes which people are available as parents. And selecting a parent changes which people are available as children. Not only does this mean that actions on one part of the form are affecting a list on the other, but it raises questions about how the UI is arranged.
+
+The issue with the UI and this "Ajaxy" approach is that the round trip to the server has not to change the database. 
 
 First, set the page to show both parent and child lists. The permitted parameters are now:
 ```
@@ -153,4 +155,4 @@ And the view is now:
 ```
 
 
-Another approach would be to enforce it on the back end and simply return an error when the form is submitted. This isn't a great user experience in many cases, so it won't be covered here. It might be the easiest to implement, and in some cases might be acceptable.
+Another approach would be to enforce it on the back end and simply return an error when the form is submitted. This isn't a great user experience in many cases, so it won't be covered here. It might be the easiest to implement, and therefore in some cases might be acceptable.
