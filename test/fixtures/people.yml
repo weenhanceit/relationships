@@ -22,3 +22,9 @@ has_one_phone:
 
 has_two_phones:
   name: Has Two Phones
+
+parent:
+  name: Parent
+
+child:
+  name: Child
