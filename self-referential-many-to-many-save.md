@@ -106,7 +106,10 @@ By giving a block, you can also disable some fields. In the example, someone can
 ```
 In fact, someone's ancestors can't be their child either:
 ```
-<%= box.check_box(disabled: @person.and_ancestors.include?(box.object)).concat(box.label) %>
+<%= box.check_box(
+    disabled: @person.and_ancestors.include?(box.object) ||
+      @person.new_record?
+    ).concat(box.label) %>
 ```
 where `@person.and_ancestors` is an Enumerable of `@person` and all its ancestors.
 ### Permitted Parameters
@@ -125,7 +128,7 @@ The user should not be able to select as a child, any of its ancestors. Nor shou
 
 To set both parents and children on the same page, it gets trickier. Selecting a child changes which people are available as parents. And selecting a parent changes which people are available as children. Not only does this mean that actions on one part of the form are affecting a list on the other, but it raises questions about how the UI is arranged.
 
-The issue with the UI and this "Ajaxy" approach is that the round trip to the server has not to change the database. 
+The issue with the UI and this "Ajaxy" approach is that the round trip to the server has not to change the database.
 
 First, set the page to show both parent and child lists. The permitted parameters are now:
 ```
@@ -143,7 +146,10 @@ And the view is now:
                                        :id,
                                        :name) do |box| %>
   <li>
-    <%= box.check_box(disabled: @person.and_ancestors.include?(box.object)).concat(box.label) %>
+    <%= box.check_box(
+        disabled: @person.and_ancestors.include?(box.object) ||
+          @person.new_record?
+        ).concat(box.label) %>
   </li>
   <% end %>
 </ul>
@@ -153,7 +159,9 @@ And the view is now:
                                        :id,
                                        :name) do |box| %>
   <li>
-    <%= box.check_box(disabled: @person.and_descendants.include?(box.object)).concat(box.label) %>
+  <%= box.check_box(disabled: @person.and_descendants.include?(box.object) ||
+                      @person.new_record?
+                      ).concat(box.label) %>
   </li>
   <% end %>
 </ul>
