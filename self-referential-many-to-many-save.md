@@ -8,13 +8,14 @@ The easy path in Rails is to:
 - For the model, set up a `has_many :through` association for the parent, and another one for the child. Both will reference the same join table (`relationships` in this example)
 
 ## User Interface
-Some user interfaces are going to be much more difficult to implement. Rails makes it relatively easy to give users a page that lets them connect the current record to other records through a `has_many :through`, using check boxes. This can be done as a "normal" page, with a submit button that creates or updates everything when the user presses it.
+Some user interfaces are going to be much more difficult to implement. Rails makes it relatively easy to give users a page that lets them connect the current record to other records via a `has_many :through`, using check boxes. This can be done as a "normal" page, with a submit button that creates or updates everything when the user presses it.
 
 Things get much more complicated to implement the minute you want any other functionality:
 
 - A filter on the list of check boxes means changes to the check boxes would have to be saved before filtering. This is relatively easy to do with Ajax, but it makes part of the form Ajaxy. To give a consistent experience to the user, you'd want to whole form to always save, and you'd want all forms in the application to always save
 - It would be nice to let the user set parents and children of a person on the same page. But if the application is a directed acyclic graph, you have to modify one list based on changes in settings to the other. Again, you could lose unsaved changes unless you save before every time you have to update a list
 - Other UI models (e.g. dragging items from one list to another) are not so easy to implement, because they don't fit the nested attributes approach very well
+- If the application requires a TBD graph, which is a DAG that doesn't allow shortcuts (like this example arguably is), then the same issues arise
 
 ## Person
 ### Migration
@@ -144,8 +145,6 @@ The solution so far does not enforce the acyclic (ancestors can't be descendants
 The user should not be able to select as a child, any of its ancestors. Nor should it be able to select as a parent, any of its descendants. As long as the edit page only permits setting either the children or the parents, but not both, everything is fine the way it is, as long as the last part of "Disabled Fields" is used.
 
 To set both parents and children on the same page, it gets trickier. Selecting a child changes which people are available as parents. And selecting a parent changes which people are available as children. Not only does this mean that actions on one part of the form are affecting a list on the other, but it raises questions about how the UI is arranged.
-
-The issue with the UI and this "Ajaxy" approach is that the round trip to the server has not to change the database.
 
 First, set the page to show both parent and child lists. The permitted parameters are now:
 ```
