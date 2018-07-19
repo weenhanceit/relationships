@@ -27,6 +27,14 @@ class Person < ApplicationRecord
   has_many :children, through: :child_links, class_name: "Person"
   accepts_nested_attributes_for :children, allow_destroy: true
 
+  has_many :connections,
+           foreign_key: :person_a_id,
+           class_name: "Connection",
+           dependent: :destroy,
+           inverse_of: :person_a
+  has_many :connected_people, through: :connections, source: :person_b, class_name: "Person"
+  accepts_nested_attributes_for :connections, allow_destroy: true
+
   include Dag
 
   def address_types

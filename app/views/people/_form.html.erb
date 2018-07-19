@@ -53,5 +53,7 @@
     </li>
     <% end %>
   </ul>
+  <h3>Connections</h3>
+  <%= person_form.collection_check_boxes(:connected_person_ids, Person.all, :id, :name) %>
   <p><%= person_form.submit %></p>
 <% end %>

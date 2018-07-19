@@ -28,3 +28,12 @@ parent:
 
 child:
   name: Child
+
+connection_root:
+  name: Connection Root
+
+connected_a:
+  name: Connected A
+
+not_connected_b:
+  name: Not Connected B

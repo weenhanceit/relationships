@@ -10,27 +10,36 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180312224402) do
+ActiveRecord::Schema.define(version: 2018_07_18_221041) do
 
   create_table "address_people", force: :cascade do |t|
-    t.integer  "address_id"
-    t.integer  "person_id"
-    t.string   "address_type"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.integer "address_id"
+    t.integer "person_id"
+    t.string "address_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["address_id"], name: "index_address_people_on_address_id"
     t.index ["person_id"], name: "index_address_people_on_person_id"
   end
 
   create_table "addresses", force: :cascade do |t|
-    t.text     "line1"
-    t.text     "line2"
-    t.text     "city"
-    t.integer  "province_id"
-    t.text     "postal_code"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.text "line1"
+    t.text "line2"
+    t.text "city"
+    t.integer "province_id"
+    t.text "postal_code"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["province_id"], name: "index_addresses_on_province_id"
+  end
+
+  create_table "connections", force: :cascade do |t|
+    t.integer "person_a_id"
+    t.integer "person_b_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["person_a_id"], name: "index_connections_on_person_a_id"
+    t.index ["person_b_id"], name: "index_connections_on_person_b_id"
   end
 
   create_table "courses", force: :cascade do |t|
@@ -46,32 +55,32 @@ ActiveRecord::Schema.define(version: 20180312224402) do
   end
 
   create_table "people", force: :cascade do |t|
-    t.string   "name"
-    t.integer  "user_id"
+    t.string "name"
+    t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_people_on_user_id"
   end
 
   create_table "phones", force: :cascade do |t|
-    t.string   "number"
-    t.string   "phone_type"
-    t.integer  "person_id"
+    t.string "number"
+    t.string "phone_type"
+    t.integer "person_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["person_id"], name: "index_phones_on_person_id"
   end
 
   create_table "provinces", force: :cascade do |t|
-    t.string   "province_code"
-    t.string   "province_name"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.string "province_code"
+    t.string "province_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "relationships", force: :cascade do |t|
-    t.integer  "parent_id"
-    t.integer  "child_id"
+    t.integer "parent_id"
+    t.integer "child_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["child_id"], name: "index_relationships_on_child_id"
@@ -79,7 +88,7 @@ ActiveRecord::Schema.define(version: 20180312224402) do
   end
 
   create_table "sections", force: :cascade do |t|
-    t.string  "short_name"
+    t.string "short_name"
     t.integer "session_id"
     t.integer "course_id"
     t.index ["course_id"], name: "index_sections_on_course_id"
@@ -87,8 +96,8 @@ ActiveRecord::Schema.define(version: 20180312224402) do
   end
 
   create_table "sessions", force: :cascade do |t|
-    t.date   "start_date"
-    t.date   "end_date"
+    t.date "start_date"
+    t.date "end_date"
     t.string "name"
   end
 
@@ -98,7 +107,7 @@ ActiveRecord::Schema.define(version: 20180312224402) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string   "name"
+    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
