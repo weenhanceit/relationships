@@ -17,7 +17,9 @@ class Person < ApplicationRecord
            dependent: :destroy,
            inverse_of: :child
   has_many :parents, through: :parent_links, class_name: "Person"
-  accepts_nested_attributes_for :parents, allow_destroy: true
+  # NOTE: Not needed because the parameters are using the `collection_singular_ids` method.
+  # It's not "nested" as it's an array on the Person object.
+  # accepts_nested_attributes_for :parents, allow_destroy: true
 
   has_many :child_links,
            foreign_key: :parent_id,
@@ -25,7 +27,9 @@ class Person < ApplicationRecord
            dependent: :destroy,
            inverse_of: :parent
   has_many :children, through: :child_links, class_name: "Person"
-  accepts_nested_attributes_for :children, allow_destroy: true
+  # NOTE: Not needed because the parameters are using the `collection_singular_ids` method.
+  # It's not "nested" as it's an array on the Person object.
+  # accepts_nested_attributes_for :children, allow_destroy: true
 
   has_many :connections,
            foreign_key: :person_a_id,
@@ -33,7 +37,9 @@ class Person < ApplicationRecord
            dependent: :destroy,
            inverse_of: :person_a
   has_many :connected_people, through: :connections, source: :person_b, class_name: "Person"
-  accepts_nested_attributes_for :connections, allow_destroy: true
+  # NOTE: Not needed because the parameters are using the `collection_singular_ids` method.
+  # It's not "nested" as it's an array on the Person object.
+  # accepts_nested_attributes_for :connections, allow_destroy: true
 
   include Dag
 
