@@ -1,0 +1,24 @@
+<%= form_for @person do |person_form| %>
+  <p>
+    <%= render partial: "person", locals: { f: person_form } %>
+  </p>
+  <ul class="phone-numbers">
+    <%= person_form.fields_for :phones do |phone_fields| %>
+      <%= render partial: "phones/fields",
+                 locals: { f: phone_fields } %>
+    <% end %>
+    <p><%= link_to_add_fields "Add Phone", person_form, :phones %></p>
+  </ul>
+  <% if @person.new_record? %>
+  <p>Save the person to enable setting children and parents.</p>
+  <% end %>
+  <hr>
+  <%= person_form.fields_for :children do |child_form| %>
+  <ul>
+    <li><%= child_form.index %></li>
+    <li><%= child_form.object_name %></li>
+    <li><%= child_form.object.inspect %></li>
+  </ul>
+  <% end %>
+  <p><%= person_form.submit %></p>
+<% end %>

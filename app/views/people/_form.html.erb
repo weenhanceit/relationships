@@ -12,6 +12,11 @@
   <% if @person.new_record? %>
   <p>Save the person to enable setting children and parents.</p>
   <% end %>
+  <hr>
+  <%= person_form.fields_for :children do |child_form| %>
+  text
+  <% end %>
+  <hr>
   <%= render partial: "children/index", locals: { f: person_form } %>
   <!-- <h3>Children</h3>
   <ul>
@@ -27,6 +32,7 @@
       </li>
     <% end %>
   </ul> -->
+  <hr>
   <h3>Parents</h3>
   <ul>
   <%= person_form.collection_check_boxes(:parent_ids,

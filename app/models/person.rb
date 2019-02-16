@@ -29,7 +29,9 @@ class Person < ApplicationRecord
   has_many :children, through: :child_links, class_name: "Person"
   # NOTE: Not needed because the parameters are using the `collection_singular_ids` method.
   # It's not "nested" as it's an array on the Person object.
-  # accepts_nested_attributes_for :children, allow_destroy: true
+  # However, it looks like it's needed in order for `fields_for` to generate the right thing.
+  # Or maybe not, since this isn't a simple has_many association.
+  accepts_nested_attributes_for :children, allow_destroy: true
 
   has_many :connections,
            foreign_key: :person_a_id,
