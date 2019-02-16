@@ -30,8 +30,8 @@ class RelationshipTest < ActiveSupport::TestCase
   end
 
   test "link an existing person to a new person by create" do
-    parent = people(:parent)
-    assert child = parent.children.create(name: "Child")
+    parent = Person.create(name: "Parent #{__FILE__}: #{__LINE__}")
+    assert child = parent.children.create(name: "Child #{__FILE__}: #{__LINE__}")
     assert_equal child, parent.children.first
     assert_equal parent, child.parents.first
     assert parent.save
@@ -42,8 +42,8 @@ class RelationshipTest < ActiveSupport::TestCase
   end
 
   test "link an existing person to a new person by build and save" do
-    parent = people(:parent)
-    assert child = parent.children.build(name: "Child")
+    parent = Person.create(name: "Parent #{__FILE__}: #{__LINE__}")
+    assert child = parent.children.build(name: "Child #{__FILE__}: #{__LINE__}")
     assert_equal child, parent.children.first
     # Note this one is commented out now.
     # assert_equal parent, child.parents.first

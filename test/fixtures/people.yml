@@ -29,6 +29,12 @@ parent:
 child:
   name: Child
 
+another_parent:
+  name: ANother Parent
+
+another_child:
+  name: ANother Child
+
 connection_root:
   name: Connection Root
 
